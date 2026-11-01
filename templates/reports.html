@@ -1,0 +1,500 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Reports page header -->
+<div class="page-header">
+
+    <div>
+        <h1>Inventory & Sales Reports</h1>
+
+        <p>
+            View business insights, inventory performance and
+            downloadable reports.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- Report summary -->
+<div class="report-summary">
+
+    <div class="report-card">
+
+        <span>Total Inventory</span>
+
+        <strong>
+            {{ total_inventory|default(0) }}
+        </strong>
+
+        <small>
+            units available
+        </small>
+
+    </div>
+
+
+    <div class="report-card">
+
+        <span>Total Units Sold</span>
+
+        <strong>
+            {{ total_units_sold|default(0) }}
+        </strong>
+
+        <small>
+            units sold
+        </small>
+
+    </div>
+
+
+    <div class="report-card">
+
+        <span>Total Products</span>
+
+        <strong>
+            {{ total_products|default(0) }}
+        </strong>
+
+        <small>
+            products tracked
+        </small>
+
+    </div>
+
+
+    <div class="report-card">
+
+        <span>Low Stock Items</span>
+
+        <strong>
+            {{ low_stock_items|default(0) }}
+        </strong>
+
+        <small>
+            items need attention
+        </small>
+
+    </div>
+
+</div>
+
+
+<!-- Download reports -->
+<div class="download-panel">
+
+    <div>
+
+        <h2>Download Reports</h2>
+
+        <p>
+            Export inventory and sales information for further
+            analysis in Excel or other tools.
+        </p>
+
+    </div>
+
+
+    <div class="download-buttons">
+
+        <a
+            href="{{ url_for('download_inventory') }}"
+            class="download-button"
+        >
+            📦 Download Inventory
+        </a>
+
+
+        <a
+            href="{{ url_for('download_low_stock') }}"
+            class="download-button"
+        >
+            ⚠️ Download Low Stock
+        </a>
+
+
+        <a
+            href="{{ url_for('download_sales') }}"
+            class="download-button"
+        >
+            📊 Download Sales Report
+        </a>
+
+    </div>
+
+</div>
+
+
+<!-- Category performance -->
+<div class="report-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            CATEGORY ANALYSIS
+        </span>
+
+        <h2>
+            Category-wise Sales Performance
+        </h2>
+
+        <p>
+            Comparison of total units sold across product categories.
+        </p>
+
+    </div>
+
+
+    <div class="report-table-wrapper">
+
+        <table class="report-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Category</th>
+                    <th>Total Units Sold</th>
+                    <th>Sales Share</th>
+                    <th>Performance</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if category_sales %}
+
+                    {% for category, sales in category_sales.items() %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ category }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            {{ sales }}
+                        </td>
+
+
+                        <td>
+                            {{ category_percentages[category]|default(0) }}%
+                        </td>
+
+
+                        <td>
+
+                            <div class="progress-bar">
+
+                                <div
+                                    class="progress-fill"
+                                    style="width: {{ category_percentages[category]|default(0) }}%;"
+                                >
+                                </div>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="no-data"
+                        >
+                            No category sales data available.
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- Region performance -->
+<div class="report-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            REGIONAL ANALYSIS
+        </span>
+
+        <h2>
+            Region-wise Inventory Distribution
+        </h2>
+
+        <p>
+            Current inventory distribution across different regions.
+        </p>
+
+    </div>
+
+
+    <div class="region-report-grid">
+
+        {% if region_inventory %}
+
+            {% for region, inventory in region_inventory.items() %}
+
+            <div class="region-report-card">
+
+                <div class="region-card-header">
+
+                    <div>
+
+                        <span class="region-name">
+                            {{ region }}
+                        </span>
+
+                        <small>
+                            Region
+                        </small>
+
+                    </div>
+
+                    <span class="region-icon">
+                        📍
+                    </span>
+
+                </div>
+
+
+                <div class="region-value">
+
+                    {{ inventory }}
+
+                    <span>
+                        units
+                    </span>
+
+                </div>
+
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill"
+                        style="width: {{ region_percentages[region]|default(0) }}%;"
+                    >
+                    </div>
+
+                </div>
+
+
+                <div class="region-footer">
+
+                    <span>
+                        Inventory Share
+                    </span>
+
+                    <strong>
+                        {{ region_percentages[region]|default(0) }}%
+                    </strong>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty-report">
+
+                <h3>
+                    No regional data available
+                </h3>
+
+                <p>
+                    Regional inventory information will appear here.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- Business insights -->
+<div class="report-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            KEY INSIGHTS
+        </span>
+
+        <h2>
+            Inventory Management Insights
+        </h2>
+
+    </div>
+
+
+    <div class="insight-grid">
+
+
+        <div class="insight-card">
+
+            <div class="insight-icon">
+                📦
+            </div>
+
+            <div>
+
+                <h3>
+                    Inventory Monitoring
+                </h3>
+
+                <p>
+                    Track current stock levels regularly to identify
+                    products that may require replenishment.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="insight-card">
+
+            <div class="insight-icon">
+                📈
+            </div>
+
+            <div>
+
+                <h3>
+                    Demand Analysis
+                </h3>
+
+                <p>
+                    Machine learning predictions can help estimate
+                    future product demand.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="insight-card">
+
+            <div class="insight-icon">
+                ⚠️
+            </div>
+
+            <div>
+
+                <h3>
+                    Stockout Prevention
+                </h3>
+
+                <p>
+                    Early identification of low inventory can reduce
+                    the risk of product stockouts.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="insight-card">
+
+            <div class="insight-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h3>
+                    ML-based Decisions
+                </h3>
+
+                <p>
+                    The Random Forest model provides demand estimates
+                    that support inventory planning decisions.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Quick actions -->
+<div class="quick-actions">
+
+    <h2>
+        Quick Actions
+    </h2>
+
+
+    <div class="action-buttons">
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="action-button"
+        >
+            Dashboard
+        </a>
+
+
+        <a
+            href="{{ url_for('inventory') }}"
+            class="action-button"
+        >
+            Inventory
+        </a>
+
+
+        <a
+            href="{{ url_for('forecasting') }}"
+            class="action-button"
+        >
+            Forecasting
+        </a>
+
+
+        <a
+            href="{{ url_for('reorder') }}"
+            class="action-button"
+        >
+            Reorder
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

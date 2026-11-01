@@ -1,0 +1,569 @@
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Reorder page header -->
+<div class="page-header">
+
+    <div>
+        <h1>Smart Reorder Management</h1>
+
+        <p>
+            Analyze inventory levels and determine whether a product
+            needs to be reordered.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- Reorder analysis -->
+<div class="reorder-layout">
+
+
+    <!-- Input form -->
+    <div class="form-panel">
+
+        <div class="panel-title">
+
+            <h2>Reorder Analysis</h2>
+
+            <p>
+                Enter the current product information.
+            </p>
+
+        </div>
+
+
+        <form
+            action="{{ url_for('calculate_reorder') }}"
+            method="POST"
+        >
+
+
+            <div class="form-group">
+
+                <label for="product_id">
+                    Product ID
+                </label>
+
+                <select
+                    id="product_id"
+                    name="product_id"
+                    required
+                >
+
+                    {% for i in range(1, 21) %}
+
+                    <option value="P{{ '%04d'|format(i) }}">
+                        P{{ '%04d'|format(i) }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="inventory">
+                    Current Inventory
+                </label>
+
+                <input
+                    type="number"
+                    id="inventory"
+                    name="inventory"
+                    min="0"
+                    value="100"
+                    placeholder="Example: 100"
+                    required
+                >
+
+                <small>
+                    Current available stock units.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="demand">
+                    Predicted Daily Demand
+                </label>
+
+                <input
+                    type="number"
+                    id="demand"
+                    name="demand"
+                    min="0"
+                    step="0.01"
+                    value="150"
+                    placeholder="Example: 150"
+                    required
+                >
+
+                <small>
+                    Expected daily product demand.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="lead_time">
+                    Lead Time
+                </label>
+
+                <div class="input-with-unit">
+
+                    <input
+                        type="number"
+                        id="lead_time"
+                        name="lead_time"
+                        min="1"
+                        value="7"
+                        placeholder="Example: 7"
+                        required
+                    >
+
+                    <span>Days</span>
+
+                </div>
+
+                <small>
+                    Number of days required to receive new stock.
+                </small>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="safety_factor">
+                    Safety Stock Factor
+                </label>
+
+                <input
+                    type="number"
+                    id="safety_factor"
+                    name="safety_factor"
+                    min="0"
+                    step="0.01"
+                    value="0.20"
+                    placeholder="Example: 0.20"
+                >
+
+                <small>
+                    Extra stock kept to protect against demand uncertainty.
+                </small>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Calculate Reorder Decision
+            </button>
+
+
+        </form>
+
+    </div>
+
+
+    <!-- Result panel -->
+    <div class="result-panel">
+
+        <div class="panel-title">
+
+            <h2>Reorder Result</h2>
+
+            <p>
+                Recommended inventory action.
+            </p>
+
+        </div>
+
+
+        {% if reorder_result %}
+
+
+        <!-- Decision status -->
+        <div
+            class="
+                reorder-status
+                {% if reorder_result.reorder %}
+                    reorder-needed
+                {% else %}
+                    stock-sufficient
+                {% endif %}
+            "
+        >
+
+            {% if reorder_result.reorder %}
+
+                <div class="status-icon">
+                    ⚠️
+                </div>
+
+                <div>
+
+                    <h3>
+                        REORDER REQUIRED
+                    </h3>
+
+                    <p>
+                        Current inventory is below the recommended
+                        reorder level.
+                    </p>
+
+                </div>
+
+            {% else %}
+
+                <div class="status-icon">
+                    ✅
+                </div>
+
+                <div>
+
+                    <h3>
+                        STOCK LEVEL IS SUFFICIENT
+                    </h3>
+
+                    <p>
+                        No immediate reorder is required.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- Result metrics -->
+        <div class="result-metrics">
+
+
+            <div class="result-metric">
+
+                <span>
+                    Product
+                </span>
+
+                <strong>
+                    {{ reorder_result.product_id|default("N/A") }}
+                </strong>
+
+            </div>
+
+
+            <div class="result-metric">
+
+                <span>
+                    Current Inventory
+                </span>
+
+                <strong>
+                    {{ reorder_result.inventory|default(0) }}
+                </strong>
+
+                <small>
+                    units
+                </small>
+
+            </div>
+
+
+            <div class="result-metric">
+
+                <span>
+                    Predicted Daily Demand
+                </span>
+
+                <strong>
+                    {{ reorder_result.demand|default(0) }}
+                </strong>
+
+                <small>
+                    units/day
+                </small>
+
+            </div>
+
+
+            <div class="result-metric">
+
+                <span>
+                    Lead Time
+                </span>
+
+                <strong>
+                    {{ reorder_result.lead_time|default(0) }}
+                </strong>
+
+                <small>
+                    days
+                </small>
+
+            </div>
+
+
+            <div class="result-metric">
+
+                <span>
+                    Safety Stock
+                </span>
+
+                <strong>
+                    {{ reorder_result.safety_stock|default(0) }}
+                </strong>
+
+                <small>
+                    units
+                </small>
+
+            </div>
+
+
+            <div class="result-metric highlight">
+
+                <span>
+                    Reorder Point
+                </span>
+
+                <strong>
+                    {{ reorder_result.reorder_point|default(0) }}
+                </strong>
+
+                <small>
+                    units
+                </small>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- Recommended order -->
+        <div class="order-recommendation">
+
+            <div>
+
+                <span>
+                    Recommended Order Quantity
+                </span>
+
+                <strong>
+                    {{ reorder_result.order_quantity|default(0) }}
+                    units
+                </strong>
+
+            </div>
+
+
+            {% if reorder_result.reorder %}
+
+                <span class="recommendation-badge danger">
+                    Order Stock
+                </span>
+
+            {% else %}
+
+                <span class="recommendation-badge success">
+                    No Order Needed
+                </span>
+
+            {% endif %}
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- Empty result -->
+        <div class="empty-result">
+
+            <div class="empty-icon">
+                🔄
+            </div>
+
+            <h3>
+                No Reorder Analysis Yet
+            </h3>
+
+            <p>
+                Enter the inventory information and click
+                <strong>Calculate Reorder Decision</strong>
+                to generate a recommendation.
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- Reorder formula explanation -->
+<div class="formula-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            REORDER LOGIC
+        </span>
+
+        <h2>
+            How Reorder Prediction Works
+        </h2>
+
+    </div>
+
+
+    <div class="formula-grid">
+
+
+        <div class="formula-card">
+
+            <div class="formula-number">
+                01
+            </div>
+
+            <h3>
+                Demand During Lead Time
+            </h3>
+
+            <p>
+                The system estimates how many units may be required
+                while waiting for new stock.
+            </p>
+
+            <div class="formula">
+                Demand × Lead Time
+            </div>
+
+        </div>
+
+
+        <div class="formula-card">
+
+            <div class="formula-number">
+                02
+            </div>
+
+            <h3>
+                Safety Stock
+            </h3>
+
+            <p>
+                Additional inventory is maintained to protect against
+                unexpected demand changes.
+            </p>
+
+            <div class="formula">
+                Demand × Safety Factor
+            </div>
+
+        </div>
+
+
+        <div class="formula-card">
+
+            <div class="formula-number">
+                03
+            </div>
+
+            <h3>
+                Reorder Point
+            </h3>
+
+            <p>
+                The reorder point combines expected lead-time demand
+                with safety stock.
+            </p>
+
+            <div class="formula">
+                Lead-Time Demand + Safety Stock
+            </div>
+
+        </div>
+
+
+        <div class="formula-card">
+
+            <div class="formula-number">
+                04
+            </div>
+
+            <h3>
+                Reorder Decision
+            </h3>
+
+            <p>
+                If current inventory is below the reorder point,
+                the system recommends replenishment.
+            </p>
+
+            <div class="formula">
+                Inventory &lt; Reorder Point
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- Quick actions -->
+<div class="quick-actions">
+
+    <h2>
+        Quick Actions
+    </h2>
+
+    <div class="action-buttons">
+
+        <a
+            href="{{ url_for('dashboard') }}"
+            class="action-button"
+        >
+            Dashboard
+        </a>
+
+        <a
+            href="{{ url_for('inventory') }}"
+            class="action-button"
+        >
+            Inventory
+        </a>
+
+        <a
+            href="{{ url_for('forecasting') }}"
+            class="action-button"
+        >
+            Demand Forecast
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

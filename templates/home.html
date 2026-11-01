@@ -1,56 +1,563 @@
-<!-- Demand prediction form -->
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Warehouse Stock Reorder Prediction</title>
-</head>
+{% block content %}
 
-<body>
+<!-- =====================================================
+     HERO SECTION
+===================================================== -->
 
-    <h1>Warehouse Stock Reorder Prediction System</h1>
+<section class="hero-section">
 
-    <form method="POST" action="/predict">
+    <div class="hero-content">
 
-        <label>Store ID:</label>
-        <input type="text" name="Store ID" value="S001"><br><br>
+        <div class="hero-badge">
+            🤖 AI-Powered Inventory Management
+        </div>
 
-        <label>Product ID:</label>
-        <input type="text" name="Product ID" value="P0001"><br><br>
+        <h1>
+            Warehouse Stock
+            <span>Reorder Prediction System</span>
+        </h1>
 
-        <label>Category:</label>
-        <input type="text" name="Category" value="Groceries"><br><br>
+        <p class="hero-description">
+            Predict product demand, monitor inventory levels,
+            identify stockout risks and make smarter reorder
+            decisions using machine learning.
+        </p>
 
-        <label>Region:</label>
-        <input type="text" name="Region" value="North"><br><br>
+        <div class="hero-buttons">
 
-        <label>Inventory Level:</label>
-        <input type="number" name="Inventory Level" value="500"><br><br>
+            <a href="{{ url_for('dashboard') }}"
+               class="btn btn-primary">
+                Open Dashboard
+            </a>
 
-        <label>Units Ordered:</label>
-        <input type="number" name="Units Ordered" value="100"><br><br>
+            <a href="{{ url_for('forecasting') }}"
+               class="btn btn-secondary">
+                Predict Demand
+            </a>
 
-        <label>Price:</label>
-        <input type="number" name="Price" value="50"><br><br>
+        </div>
 
-        <label>Discount:</label>
-        <input type="number" name="Discount" value="10"><br><br>
+    </div>
 
-        <label>Weather Condition:</label>
-        <input type="text" name="Weather Condition" value="Sunny"><br><br>
 
-        <label>Holiday/Promotion:</label>
-        <input type="number" name="Holiday/Promotion" value="0"><br><br>
+    <!-- Hero visual -->
 
-        <label>Competitor Pricing:</label>
-        <input type="number" name="Competitor Pricing" value="48"><br><br>
+    <div class="hero-visual">
 
-        <label>Seasonality:</label>
-        <input type="text" name="Seasonality" value="Summer"><br><br>
+        <div class="dashboard-preview">
 
-        <button type="submit">Predict Demand</button>
+            <div class="preview-header">
+                <span>📦</span>
+                <strong>Inventory Overview</strong>
+            </div>
 
-    </form>
+            <div class="preview-stats">
 
-</body>
-</html>
+                <div class="preview-card">
+                    <span>Inventory</span>
+                    <strong>24.8K</strong>
+                    <small>Current Stock</small>
+                </div>
+
+                <div class="preview-card">
+                    <span>Demand</span>
+                    <strong>1.2K</strong>
+                    <small>Predicted</small>
+                </div>
+
+            </div>
+
+            <div class="preview-chart">
+
+                <div class="chart-title">
+                    Demand Forecast
+                </div>
+
+                <div class="chart-bars">
+
+                    <span style="height: 45%;"></span>
+                    <span style="height: 65%;"></span>
+                    <span style="height: 52%;"></span>
+                    <span style="height: 78%;"></span>
+                    <span style="height: 60%;"></span>
+                    <span style="height: 88%;"></span>
+                    <span style="height: 72%;"></span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     QUICK HIGHLIGHTS
+===================================================== -->
+
+<section class="hero-highlights">
+
+    <div class="highlight-card">
+
+        <div class="highlight-icon">
+            📦
+        </div>
+
+        <div>
+            <strong>Demand Forecast</strong>
+            <p>AI Prediction</p>
+        </div>
+
+    </div>
+
+
+    <div class="highlight-card">
+
+        <div class="highlight-icon">
+            📊
+        </div>
+
+        <div>
+            <strong>Stock Status</strong>
+            <p>Smart Monitoring</p>
+        </div>
+
+    </div>
+
+
+    <div class="highlight-card">
+
+        <div class="highlight-icon">
+            🔄
+        </div>
+
+        <div>
+            <strong>Reorder</strong>
+            <p>Recommendation</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FEATURES SECTION
+===================================================== -->
+
+<section class="features-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            SYSTEM FEATURES
+        </span>
+
+        <h2>
+            Everything You Need for Better
+            Inventory Decisions
+        </h2>
+
+        <p>
+            The system combines inventory analytics and
+            machine learning to help reduce stockout risk
+            and improve inventory planning.
+        </p>
+
+    </div>
+
+
+    <div class="features-grid">
+
+
+        <!-- Feature 1 -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📊
+            </div>
+
+            <h3>
+                Inventory Dashboard
+            </h3>
+
+            <p>
+                Monitor total inventory, units sold,
+                products, low-stock items and inventory
+                status from one dashboard.
+            </p>
+
+            <a href="{{ url_for('dashboard') }}">
+                View Dashboard →
+            </a>
+
+        </div>
+
+
+        <!-- Feature 2 -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🤖
+            </div>
+
+            <h3>
+                Demand Forecasting
+            </h3>
+
+            <p>
+                Use the trained Random Forest machine
+                learning model to predict future product
+                demand.
+            </p>
+
+            <a href="{{ url_for('forecasting') }}">
+                Predict Demand →
+            </a>
+
+        </div>
+
+
+        <!-- Feature 3 -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🔄
+            </div>
+
+            <h3>
+                Reorder Prediction
+            </h3>
+
+            <p>
+                Calculate reorder points, safety stock
+                and recommended order quantities.
+            </p>
+
+            <a href="{{ url_for('reorder') }}">
+                Calculate Reorder →
+            </a>
+
+        </div>
+
+
+        <!-- Feature 4 -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                ⚠️
+            </div>
+
+            <h3>
+                Stockout Risk
+            </h3>
+
+            <p>
+                Identify products with low inventory and
+                reduce the possibility of stockouts.
+            </p>
+
+            <a href="{{ url_for('inventory') }}">
+                Check Inventory →
+            </a>
+
+        </div>
+
+
+        <!-- Feature 5 -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📈
+            </div>
+
+            <h3>
+                Inventory Analytics
+            </h3>
+
+            <p>
+                Analyze category sales, regional inventory
+                and important inventory performance metrics.
+            </p>
+
+            <a href="{{ url_for('dashboard') }}">
+                View Analytics →
+            </a>
+
+        </div>
+
+
+        <!-- Feature 6 -->
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                📄
+            </div>
+
+            <h3>
+                Reports
+            </h3>
+
+            <p>
+                Generate inventory, low-stock and sales
+                reports for further analysis and planning.
+            </p>
+
+            <a href="{{ url_for('reports') }}">
+                View Reports →
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     WORKFLOW SECTION
+===================================================== -->
+
+<section class="workflow-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            HOW IT WORKS
+        </span>
+
+        <h2>
+            From Inventory Data to Smart Decisions
+        </h2>
+
+        <p>
+            A simple machine learning workflow for
+            warehouse inventory management.
+        </p>
+
+    </div>
+
+
+    <div class="workflow-grid">
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                01
+            </div>
+
+            <div class="step-icon">
+                📦
+            </div>
+
+            <h3>
+                Inventory Data
+            </h3>
+
+            <p>
+                Store, product, inventory, sales and
+                pricing information is collected.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line">
+            →
+        </div>
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                02
+            </div>
+
+            <div class="step-icon">
+                🤖
+            </div>
+
+            <h3>
+                ML Prediction
+            </h3>
+
+            <p>
+                The trained Random Forest model predicts
+                product demand.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line">
+            →
+        </div>
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                03
+            </div>
+
+            <div class="step-icon">
+                📊
+            </div>
+
+            <h3>
+                Stock Analysis
+            </h3>
+
+            <p>
+                Current inventory is compared with
+                predicted demand and reorder levels.
+            </p>
+
+        </div>
+
+
+        <div class="workflow-line">
+            →
+        </div>
+
+
+        <div class="workflow-step">
+
+            <div class="step-number">
+                04
+            </div>
+
+            <div class="step-icon">
+                🔄
+            </div>
+
+            <h3>
+                Reorder Decision
+            </h3>
+
+            <p>
+                The system recommends whether inventory
+                should be reordered.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     TECHNOLOGY STACK
+===================================================== -->
+
+<section class="technology-section">
+
+    <div class="section-heading">
+
+        <span class="section-label">
+            TECHNOLOGY STACK
+        </span>
+
+        <h2>
+            Built With Modern Technologies
+        </h2>
+
+        <p>
+            Technologies used to build the complete
+            warehouse inventory prediction system.
+        </p>
+
+    </div>
+
+
+    <div class="technology-grid">
+
+        <div class="technology-card">
+            <strong>Python</strong>
+            <span>Programming</span>
+        </div>
+
+        <div class="technology-card">
+            <strong>Pandas</strong>
+            <span>Data Analysis</span>
+        </div>
+
+        <div class="technology-card">
+            <strong>Scikit-Learn</strong>
+            <span>Machine Learning</span>
+        </div>
+
+        <div class="technology-card">
+            <strong>Random Forest</strong>
+            <span>Prediction Model</span>
+        </div>
+
+        <div class="technology-card">
+            <strong>Flask</strong>
+            <span>Backend</span>
+        </div>
+
+        <div class="technology-card">
+            <strong>HTML / CSS / JS</strong>
+            <span>Frontend</span>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FINAL CTA
+===================================================== -->
+
+<section class="cta-section">
+
+    <div class="cta-content">
+
+        <span class="section-label">
+            GET STARTED
+        </span>
+
+        <h2>
+            Make Smarter Inventory Decisions
+        </h2>
+
+        <p>
+            Use machine learning to forecast demand,
+            monitor inventory and make better reorder
+            decisions.
+        </p>
+
+        <div class="hero-buttons">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="btn btn-primary">
+                Open Dashboard
+            </a>
+
+            <a href="{{ url_for('reports') }}"
+               class="btn btn-secondary">
+                View Reports
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

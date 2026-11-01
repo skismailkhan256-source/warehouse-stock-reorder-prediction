@@ -1,0 +1,298 @@
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Forecasting page header -->
+<div class="page-header">
+    <div>
+        <h1>Demand Forecasting</h1>
+        <p>Predict future product demand using the trained machine learning model.</p>
+    </div>
+</div>
+
+
+<!-- Forecast form -->
+<div class="forecast-layout">
+
+    <div class="form-panel">
+
+        <h2>Enter Product Details</h2>
+
+        <form action="{{ url_for('predict') }}" method="POST">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Store ID</label>
+                    <input
+                        type="text"
+                        name="Store ID"
+                        placeholder="Example: S001"
+                        value="S001"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Product ID</label>
+                    <input
+                        type="text"
+                        name="Product ID"
+                        placeholder="Example: P0001"
+                        value="P0001"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Category</label>
+                    <select name="Category" required>
+                        <option value="Groceries">Groceries</option>
+                        <option value="Toys">Toys</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Furniture">Furniture</option>
+                        <option value="Clothing">Clothing</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Region</label>
+                    <select name="Region" required>
+                        <option value="North">North</option>
+                        <option value="South">South</option>
+                        <option value="East">East</option>
+                        <option value="West">West</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Inventory Level</label>
+                    <input
+                        type="number"
+                        name="Inventory Level"
+                        placeholder="Example: 500"
+                        value="500"
+                        min="0"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Units Ordered</label>
+                    <input
+                        type="number"
+                        name="Units Ordered"
+                        placeholder="Example: 100"
+                        value="100"
+                        min="0"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Price</label>
+                    <input
+                        type="number"
+                        name="Price"
+                        placeholder="Example: 50"
+                        value="50"
+                        min="0"
+                        step="0.01"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Discount (%)</label>
+                    <input
+                        type="number"
+                        name="Discount"
+                        placeholder="Example: 10"
+                        value="10"
+                        min="0"
+                        max="100"
+                        step="0.01"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Weather Condition</label>
+                    <select name="Weather Condition" required>
+                        <option value="Sunny">Sunny</option>
+                        <option value="Rainy">Rainy</option>
+                        <option value="Cloudy">Cloudy</option>
+                        <option value="Snowy">Snowy</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Holiday / Promotion</label>
+                    <select name="Holiday/Promotion" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Competitor Pricing</label>
+                    <input
+                        type="number"
+                        name="Competitor Pricing"
+                        placeholder="Example: 48"
+                        value="48"
+                        min="0"
+                        step="0.01"
+                        required>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Seasonality</label>
+                    <select name="Seasonality" required>
+                        <option value="Summer">Summer</option>
+                        <option value="Winter">Winter</option>
+                        <option value="Spring">Spring</option>
+                        <option value="Autumn">Autumn</option>
+                    </select>
+                </div>
+
+            </div>
+
+
+            <button type="submit" class="primary-button">
+                Predict Demand
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- Prediction result -->
+    <div class="prediction-panel">
+
+        <h2>Prediction Result</h2>
+
+        {% if prediction is defined and prediction is not none %}
+
+            <div class="prediction-result">
+
+                <p>Predicted Demand</p>
+
+                <div class="prediction-value">
+                    {{ prediction }}
+                </div>
+
+                <span class="prediction-unit">
+                    units
+                </span>
+
+            </div>
+
+
+            <div class="prediction-info">
+
+                <h3>What does this mean?</h3>
+
+                <p>
+                    The machine learning model estimates the expected number
+                    of units that may be sold based on the entered inventory,
+                    product, pricing, promotion and seasonal information.
+                </p>
+
+            </div>
+
+        {% else %}
+
+            <div class="empty-prediction">
+
+                <div class="empty-icon">📊</div>
+
+                <h3>No Prediction Yet</h3>
+
+                <p>
+                    Enter the product details and click
+                    <strong>Predict Demand</strong> to generate a forecast.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<!-- Forecast information -->
+<div class="info-section">
+
+    <h2>How Demand Forecasting Works</h2>
+
+    <div class="info-grid">
+
+        <div class="info-card">
+            <h3>1. Product Data</h3>
+            <p>
+                Product, store and category information is provided to the model.
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h3>2. Inventory Data</h3>
+            <p>
+                Current inventory and ordered quantity help estimate demand.
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h3>3. Market Factors</h3>
+            <p>
+                Price, discount, weather, promotion and competitor pricing
+                are considered.
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h3>4. ML Prediction</h3>
+            <p>
+                The trained Random Forest model predicts expected units sold.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Quick actions -->
+<div class="quick-actions">
+
+    <h2>Quick Actions</h2>
+
+    <div class="action-buttons">
+
+        <a href="{{ url_for('dashboard') }}" class="action-button">
+            Dashboard
+        </a>
+
+        <a href="{{ url_for('inventory') }}" class="action-button">
+            Inventory
+        </a>
+
+        <a href="{{ url_for('reorder') }}" class="action-button">
+            Reorder Management
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
+```

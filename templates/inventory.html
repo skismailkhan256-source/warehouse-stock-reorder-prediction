@@ -1,0 +1,497 @@
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Inventory page header -->
+<div class="page-header">
+
+    <div>
+        <h1>Inventory Management</h1>
+
+        <p>
+            Monitor product stock, sales and inventory status.
+        </p>
+    </div>
+
+</div>
+
+
+<!-- Inventory summary -->
+<div class="inventory-summary">
+
+    <div class="summary-card">
+        <span>Total Products</span>
+        <strong>{{ total_products|default(0) }}</strong>
+    </div>
+
+    <div class="summary-card">
+        <span>Total Inventory</span>
+        <strong>{{ total_inventory|default(0) }}</strong>
+    </div>
+
+    <div class="summary-card">
+        <span>Low Stock</span>
+        <strong>{{ low_stock_items|default(0) }}</strong>
+    </div>
+
+    <div class="summary-card">
+        <span>Reorder Required</span>
+        <strong>{{ reorder_required|default(0) }}</strong>
+    </div>
+
+</div>
+
+
+<!-- Filters -->
+<div class="filter-panel">
+
+    <div class="filter-header">
+
+        <h2>Search & Filter Inventory</h2>
+
+        <button
+            type="button"
+            class="clear-filter"
+            onclick="clearInventoryFilters()">
+            Clear Filters
+        </button>
+
+    </div>
+
+
+    <div class="filter-grid">
+
+        <div class="filter-group">
+
+            <label>Search Product</label>
+
+            <input
+                type="text"
+                id="inventorySearch"
+                placeholder="Search Product ID..."
+            >
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>Category</label>
+
+            <select id="categoryFilter">
+
+                <option value="">All Categories</option>
+
+                <option value="Groceries">Groceries</option>
+                <option value="Toys">Toys</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Clothing">Clothing</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>Region</label>
+
+            <select id="regionFilter">
+
+                <option value="">All Regions</option>
+
+                <option value="North">North</option>
+                <option value="South">South</option>
+                <option value="East">East</option>
+                <option value="West">West</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label>Stock Status</label>
+
+            <select id="stockFilter">
+
+                <option value="">All Status</option>
+
+                <option value="normal">Normal</option>
+                <option value="low">Low Stock</option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Inventory table -->
+<div class="inventory-panel">
+
+    <div class="table-header">
+
+        <div>
+
+            <h2>Inventory Records</h2>
+
+            <p>
+                Current warehouse inventory information
+            </p>
+
+        </div>
+
+        <span id="recordCount" class="record-count">
+            Records
+        </span>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table id="inventoryTable">
+
+            <thead>
+
+                <tr>
+
+                    <th>Product ID</th>
+                    <th>Store ID</th>
+                    <th>Category</th>
+                    <th>Region</th>
+                    <th>Inventory</th>
+                    <th>Units Sold</th>
+                    <th>Units Ordered</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <th>Status</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% if inventory_data %}
+
+                    {% for row in inventory_data %}
+
+                    <tr
+                        data-category="{{ row['Category'] }}"
+                        data-region="{{ row['Region'] }}"
+                        data-stock="{% if row['Inventory Level'] < 100 %}low{% else %}normal{% endif %}"
+                    >
+
+                        <td>
+                            <strong>
+                                {{ row["Product ID"] }}
+                            </strong>
+                        </td>
+
+
+                        <td>
+                            {{ row["Store ID"] }}
+                        </td>
+
+
+                        <td>
+                            {{ row["Category"] }}
+                        </td>
+
+
+                        <td>
+                            {{ row["Region"] }}
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ row["Inventory Level"] }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+                            {{ row["Units Sold"] }}
+                        </td>
+
+
+                        <td>
+                            {{ row["Units Ordered"] }}
+                        </td>
+
+
+                        <td>
+                            ₹{{ row["Price"] }}
+                        </td>
+
+
+                        <td>
+                            {{ row["Discount"] }}%
+                        </td>
+
+
+                        <td>
+
+                            {% if row["Inventory Level"] < 100 %}
+
+                                <span class="stock-badge low">
+                                    Low Stock
+                                </span>
+
+                            {% else %}
+
+                                <span class="stock-badge normal">
+                                    Normal
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                {% else %}
+
+                    <tr>
+
+                        <td colspan="10" class="no-data">
+                            No inventory data available.
+                        </td>
+
+                    </tr>
+
+                {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- Inventory information -->
+<div class="inventory-info-grid">
+
+    <div class="inventory-info-card">
+
+        <div class="info-icon">
+            📦
+        </div>
+
+        <div>
+
+            <h3>Inventory Level</h3>
+
+            <p>
+                Shows the current number of units available
+                for each product.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="inventory-info-card">
+
+        <div class="info-icon">
+            📈
+        </div>
+
+        <div>
+
+            <h3>Units Sold</h3>
+
+            <p>
+                Represents the quantity of products sold
+                during the recorded period.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="inventory-info-card">
+
+        <div class="info-icon">
+            ⚠️
+        </div>
+
+        <div>
+
+            <h3>Low Stock</h3>
+
+            <p>
+                Products with inventory below the defined
+                threshold are highlighted.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+// Filter inventory table
+
+function filterInventory() {
+
+    const search =
+        document.getElementById("inventorySearch")
+        .value
+        .toLowerCase();
+
+    const category =
+        document.getElementById("categoryFilter")
+        .value
+        .toLowerCase();
+
+    const region =
+        document.getElementById("regionFilter")
+        .value
+        .toLowerCase();
+
+    const stock =
+        document.getElementById("stockFilter")
+        .value
+        .toLowerCase();
+
+
+    const rows =
+        document.querySelectorAll("#inventoryTable tbody tr");
+
+
+    let visibleRows = 0;
+
+
+    rows.forEach(function(row) {
+
+        const rowText =
+            row.textContent.toLowerCase();
+
+        const rowCategory =
+            (row.dataset.category || "").toLowerCase();
+
+        const rowRegion =
+            (row.dataset.region || "").toLowerCase();
+
+        const rowStock =
+            (row.dataset.stock || "").toLowerCase();
+
+
+        const searchMatch =
+            rowText.includes(search);
+
+        const categoryMatch =
+            category === "" ||
+            rowCategory === category;
+
+        const regionMatch =
+            region === "" ||
+            rowRegion === region;
+
+        const stockMatch =
+            stock === "" ||
+            rowStock === stock;
+
+
+        if (
+            searchMatch &&
+            categoryMatch &&
+            regionMatch &&
+            stockMatch
+        ) {
+
+            row.style.display = "";
+
+            visibleRows++;
+
+        } else {
+
+            row.style.display = "none";
+
+        }
+
+    });
+
+
+    const recordCount =
+        document.getElementById("recordCount");
+
+
+    recordCount.textContent =
+        visibleRows + " Records";
+
+}
+
+
+// Clear filters
+
+function clearInventoryFilters() {
+
+    document.getElementById("inventorySearch").value = "";
+
+    document.getElementById("categoryFilter").value = "";
+
+    document.getElementById("regionFilter").value = "";
+
+    document.getElementById("stockFilter").value = "";
+
+    filterInventory();
+
+}
+
+
+// Add filter events
+
+document
+    .getElementById("inventorySearch")
+    .addEventListener("keyup", filterInventory);
+
+
+document
+    .getElementById("categoryFilter")
+    .addEventListener("change", filterInventory);
+
+
+document
+    .getElementById("regionFilter")
+    .addEventListener("change", filterInventory);
+
+
+document
+    .getElementById("stockFilter")
+    .addEventListener("change", filterInventory);
+
+
+// Show initial record count
+
+document.addEventListener("DOMContentLoaded", function() {
+
+    filterInventory();
+
+});
+
+</script>
+
+{% endblock %}
+```
