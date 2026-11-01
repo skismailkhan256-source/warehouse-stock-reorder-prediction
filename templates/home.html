@@ -1,0 +1,56 @@
+<!-- Demand prediction form -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Warehouse Stock Reorder Prediction</title>
+</head>
+
+<body>
+
+    <h1>Warehouse Stock Reorder Prediction System</h1>
+
+    <form method="POST" action="/predict">
+
+        <label>Store ID:</label>
+        <input type="text" name="Store ID" value="S001"><br><br>
+
+        <label>Product ID:</label>
+        <input type="text" name="Product ID" value="P0001"><br><br>
+
+        <label>Category:</label>
+        <input type="text" name="Category" value="Groceries"><br><br>
+
+        <label>Region:</label>
+        <input type="text" name="Region" value="North"><br><br>
+
+        <label>Inventory Level:</label>
+        <input type="number" name="Inventory Level" value="500"><br><br>
+
+        <label>Units Ordered:</label>
+        <input type="number" name="Units Ordered" value="100"><br><br>
+
+        <label>Price:</label>
+        <input type="number" name="Price" value="50"><br><br>
+
+        <label>Discount:</label>
+        <input type="number" name="Discount" value="10"><br><br>
+
+        <label>Weather Condition:</label>
+        <input type="text" name="Weather Condition" value="Sunny"><br><br>
+
+        <label>Holiday/Promotion:</label>
+        <input type="number" name="Holiday/Promotion" value="0"><br><br>
+
+        <label>Competitor Pricing:</label>
+        <input type="number" name="Competitor Pricing" value="48"><br><br>
+
+        <label>Seasonality:</label>
+        <input type="text" name="Seasonality" value="Summer"><br><br>
+
+        <button type="submit">Predict Demand</button>
+
+    </form>
+
+</body>
+</html>
